@@ -13,7 +13,8 @@ bool RukkyNewApplication(
     char* application_name,
     char* engine_name
 ) {
-    application = malloc(sizeof(RukkyApplication));
+    if (!application) return false;
+
     const char *extensions[] = {
         VK_KHR_SURFACE_EXTENSION_NAME,
 
@@ -47,7 +48,7 @@ bool RukkyNewApplication(
 	#ifdef RUKKY_DEBUG
 	fprintf(stderr, "Failed to create Vulkan instance\n");
 	#endif
-        
+
 	return false;
     }
 

@@ -10,7 +10,8 @@ librukky_core = shared_library('rukky-core',
 	[
 	'source/core/new_window.c',
         'source/core/new_app.c',
-	'source/core/app_loop.c'
+	'source/core/app_loop.c',
+	'source/core/new_renderpass.c'
 	],
 	include_directories: inc,
 	dependencies: [x11_dep, vulkan_dep],

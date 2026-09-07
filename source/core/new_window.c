@@ -15,14 +15,10 @@ bool RukkyNewWindow(
     u32 border_width,
     char* title
 ) {
-    window = malloc(sizeof(RukkyWindow));
     window->display = XOpenDisplay(NULL);
 
     if (!window->display) {
 	fprintf(stderr, "Failed to open X display\n");
-
-	free(window);
-	window = NULL;
 
         return false;
     }

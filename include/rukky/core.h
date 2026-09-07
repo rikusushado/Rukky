@@ -54,3 +54,5 @@ RUKKY_PUBLIC void RukkyApplicationLoop(
     void* parameter, // Callable parameter or NULL
     s32 sleep_frames // Run callable every X frame ammount (Set to `-1` if no callable is provided) 
 );
+
+RUKKY_PUBLIC bool createRenderPass(VkRenderPass* renderpass, VkDevice* device, VkFormat swapChainImageFormat);

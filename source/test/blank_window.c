@@ -2,29 +2,28 @@
 
 int main(int argc, char** argv)
 {
-	RukkyWindow* window = NULL;
-	RukkyNewWindow(
-	    window,
+	RukkyWindow window;
+	bool success = RukkyNewWindow(
+	    &window,
 	    0, 0,
 	    144, 144,
 	    0,
 	    "Rukky | Blank Window Test"
 	);
 
-	if(!window) return -1;
+	if (!success) return -1;
 
-	RukkyApplication* application = NULL;
+	RukkyApplication application;
 	RukkyNewApplication(
-		application,
+		&application,
 		"Rukky Blank Window Test",
 		"Rukky Core"
 	);
 
-	if (!application) return -1;
 
 	RukkyApplicationLoop(
-		application,
-		window,
+		&application,
+		&window,
 		60,
 		0,
 		NULL,
