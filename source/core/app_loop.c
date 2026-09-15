@@ -11,8 +11,13 @@
 #include <string.h>
 
 void RukkyApplicationLoop(
+<<<<<<< HEAD
     RukkyWindow* window,
     u32 framerate,
+=======
+    RukkyWindow* window, // Must be the window you want to draw in
+    u32 usec_refresh_time, // Set a refresh time in micro seconds to limit resources 
+>>>>>>> 2887119 (WIP: Core features)
     uptr callable, // Must be a valid function
     uptr* parameter, // Callable parameter or NULL
     s32 sleep_frames // Run callable every X frame ammount (Set to `-1` if no callable is provided) 
@@ -27,14 +32,21 @@ void RukkyApplicationLoop(
 
         if (sleep_frames < 0) {
             frame_amount = 1;
+<<<<<<< HEAD
         } else if (sleep_frames == 0) {
             frame_amount = 0;
+=======
+>>>>>>> 2887119 (WIP: Core features)
         } else {
             frame_amount = sleep_frames;
         }
 
         fptr(parameter, 'i');
         countdown = frame_amount;
+<<<<<<< HEAD
+=======
+
+>>>>>>> 2887119 (WIP: Core features)
     } else {
         frame_amount = 0;
         countdown = -1;

@@ -20,6 +20,10 @@ typedef uintptr_t uptr;
 typedef float f32;
 
 void fatal(const char *msg);
+<<<<<<< HEAD
+=======
+
+>>>>>>> 2887119 (WIP: Core features)
 typedef struct {
     Window selfX11;
 	GLXWindow selfGL;

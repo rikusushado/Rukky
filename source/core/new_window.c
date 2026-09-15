@@ -9,17 +9,30 @@
 #include <string.h>
 
 bool RukkyNewWindow(
-    RukkyWindow* window, 
+    uptr* window, 
+    int* framebuffer_attributes,
     s32 x, s32 y,
     u32 width, u32 height,
     u32 border_width,
     char* title
 ) {
+<<<<<<< HEAD
     window->display = XOpenDisplay(NULL);
     if (!window->display) fatal("cannot open display");
+=======
+    window = calloc(6, sizeof(uptr)); 	
 
-    window->screen = DefaultScreen(window->display);
+    window[1] = (uptr)XOpenDisplay(NULL);
 
+    if (!window[1]) fatal("cannot open display");
+>>>>>>> 2887119 (WIP: Core features)
+
+    window[2] = (uptr)DefaultScreen(window[1]);
+
+<<<<<<< HEAD
+=======
+    /*
+>>>>>>> 2887119 (WIP: Core features)
     int fbAttribs[] = {
         GLX_X_RENDERABLE, True,
         GLX_DRAWABLE_TYPE, GLX_WINDOW_BIT,
@@ -33,13 +46,21 @@ bool RukkyNewWindow(
         GLX_DOUBLEBUFFER,  True,
         None
     };
+<<<<<<< HEAD
 
     int fbcount;
     GLXFBConfig *fbconfigs = glXChooseFBConfig(window->display, window->screen, fbAttribs, &fbcount);
+=======
+    */
+
+    int fbcount;
+    GLXFBConfig *fbconfigs = glXChooseFBConfig((Display*)window[1], (int)window[2], framebuffer_attributes, &fbcount);
+>>>>>>> 2887119 (WIP: Core features)
     if (!fbconfigs || fbcount == 0) fatal("no FBConfig");
 
     GLXFBConfig fbconfig = fbconfigs[0];
 
+<<<<<<< HEAD
     XVisualInfo *vi = glXGetVisualFromFBConfig(window->display, fbconfig);
     if (!vi) fatal("no visual");
 
@@ -52,10 +73,28 @@ bool RukkyNewWindow(
         window->x = x, window->y = y, 
         window->width = width, window->height = height, 
         window->border_width = border_width,
+=======
+    XVisualInfo *vi = glXGetVisualFromFBConfig((Display*)window[1], fbconfig);
+    if (!vi) fatal("no visual");
+
+    window[3] = (uptr)malloc(sizeof(XWindowAttributes));
+    (XWindowAttributes*)window[3]->colormap = XCreateColormap(window[1], RootWindow(window[1], vi->screen), vi->visual, AllocNone);
+    (XWindowAttributes*)window[3].event_mask = ExposureMask | KeyPressMask | StructureNotifyMask;
+
+	
+    window[4] = (uptr)malloc(sizeof(Window));
+    *(Window*)window[4] = XCreateWindow(
+        (Display*)window[1],
+        RootWindow((Display*)window[1], vi->screen),
+        window[5] = (uptr)x, window[6] = (uptr)y, 
+        window[7] = (uptr)width, window[8] = (uptr)height, 
+        window[9] = (uptr)border_width,
+>>>>>>> 2887119 (WIP: Core features)
         vi->depth,
         InputOutput,
         vi->visual,
         CWColormap | CWEventMask,
+<<<<<<< HEAD
         &window->set_window_attributes
     );
 
@@ -65,6 +104,21 @@ bool RukkyNewWindow(
     typedef GLXContext (*glXCreateContextAttribsARBProc)(
         Display*, GLXFBConfig, GLXContext, Bool, const int*
     );
+=======
+	(XWindowAttributes)window[3]
+    );
+
+    window[10] = malloc(sizeof(title));
+    memcpy(title, window, sizeof(title));
+
+    XStoreName((Display*)window[1], *(Window*)window[4], (char*)window[10]);
+    XMapWindow((Display*)window[1], *(Window*)window[4]);
+
+    typedef GLXContext (*glXCreateContextAttribsARBProc)(
+        Display*, GLXFBConfig, GLXContext, Bool, const int*
+    );
+
+>>>>>>> 2887119 (WIP: Core features)
     glXCreateContextAttribsARBProc glXCreateContextAttribsARB =
         (glXCreateContextAttribsARBProc)
         glXGetProcAddress((const GLubyte*)"glXCreateContextAttribsARB");
