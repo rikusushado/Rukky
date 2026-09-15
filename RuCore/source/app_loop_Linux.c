@@ -67,7 +67,7 @@ void RukkyApplicationLoopWayland (
             }
         }
 
-            if (ret == -1) running = 0;
+        if (ret == -1) running = 0;
 
         eglSwapBuffers((EGLDisplay)(*window)[1], (EGLSurface)(*window)[6]);
 
