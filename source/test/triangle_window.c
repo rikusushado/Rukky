@@ -96,7 +96,7 @@ void DrawTriangle(uptr* parameter, char action) {
 
 int main(int argc, char** argv)
 {
-	RukkyWindow window;
+	uptr* window = NULL;
 	bool success = RukkyNewWindow(
 	    &window,
 	    0, 0,
@@ -111,7 +111,7 @@ int main(int argc, char** argv)
 
 	RukkyApplicationLoop(
 		&window,
-		60,
+		1000,
 		(uptr)&DrawTriangle,
 		parameter,
     -1

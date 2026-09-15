@@ -2,7 +2,7 @@
 
 int main(int argc, char** argv)
 {
-	RukkyWindow window;
+	uptr* window = NULL;
 	bool success = RukkyNewWindow(
 	    &window,
 	    0, 0,
@@ -15,7 +15,7 @@ int main(int argc, char** argv)
 
 	RukkyApplicationLoop(
 		&window,
-		60,
+		1000,
 		0,
 		NULL,
 		-1
