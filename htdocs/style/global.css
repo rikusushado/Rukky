@@ -1,0 +1,43 @@
+* {
+    font-family: sans-serif;
+}
+
+body {
+    background-color: #000;
+}
+
+.featured-list > li {
+    width: 70vw;
+    margin-bottom: 2%;
+}
+
+button {
+    border: transparent;
+    background-color: transparent;
+    height: fit-content;
+    padding: 0;
+}
+
+button > div {
+    border: 3px solid #fff;
+    border-radius: 1.2em;
+    background-color: #000;
+    color: #fff;
+    padding: 8px 24px;
+    -webkit-border-radius: 1.2em;
+    -moz-border-radius: 1.2em;
+    -ms-border-radius: 1.2em;
+    -o-border-radius: 1.2em;
+}
+
+button:hover > div {
+    background-color: #333;
+}
+
+.div-vertical-left {
+    float: left;
+}
+
+p {
+    margin: 0;
+}
