@@ -13,16 +13,7 @@ int main(int argc, char** argv)
 
 	if (!success) return -1;
 
-	RukkyApplication application;
-	RukkyNewApplication(
-		&application,
-		"Rukky Blank Window Test",
-		"Rukky Core"
-	);
-
-
 	RukkyApplicationLoop(
-		&application,
 		&window,
 		60,
 		0,

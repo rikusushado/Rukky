@@ -19,16 +19,23 @@ indent_mode=2
 
 [project]
 name=Rukky
-base_path=/data/data/com.termux/files/home/Projects/Rukky
+base_path=/home/rikusu/Documents/Rukky
+description=
 
 [long line marker]
 long_line_behaviour=1
 long_line_column=72
 
 [files]
-current_page=1
-FILE_NAME_0=1;Markdown;0;EUTF-8;1;1;0;%2Fdata%2Fdata%2Fcom.termux%2Ffiles%2Fhome%2FProjects%2FRukky%2FREADME.md;0;4
-FILE_NAME_1=0;C;0;EUTF-8;1;1;0;%2Fdata%2Fdata%2Fcom.termux%2Ffiles%2Fhome%2FProjects%2FRukky%2Fsource%2Fcore%2Fwindow_new.c;0;2
+current_page=0
+FILE_NAME_0=345;C;0;EUTF-8;1;1;0;%2Fhome%2Frikusu%2FDocuments%2FRukky%2Fsource%2Ftest%2Ftriangle_window.c;0;2
+FILE_NAME_1=554;C++;0;EUTF-8;1;1;0;%2Fhome%2Frikusu%2FDocuments%2FRukky%2Finclude%2Frukky%2Fcore.h;0;2
+FILE_NAME_2=38;C++;0;EUTF-8;1;1;0;%2Fhome%2Frikusu%2FDocuments%2FRukky%2Finclude%2Frukky%2Frukky.h;0;2
+FILE_NAME_3=664;C;0;EUTF-8;1;1;0;%2Fhome%2Frikusu%2FDocuments%2FRukky%2Fsource%2Fcore%2Fapp_loop.c;0;2
+FILE_NAME_4=2306;C;0;EUTF-8;1;1;0;%2Fhome%2Frikusu%2FDocuments%2FRukky%2Fsource%2Fcore%2Fnew_window.c;0;2
+FILE_NAME_5=137;C;0;EUTF-8;1;1;0;%2Fhome%2Frikusu%2FDocuments%2FRukky%2Fsource%2Ftest%2Fblank_window.c;0;2
+FILE_NAME_6=399;Meson;0;EUTF-8;1;1;0;%2Fhome%2Frikusu%2FDocuments%2FRukky%2Fmeson.build;0;2
+FILE_NAME_7=131;C;0;EUTF-8;1;1;0;%2Fhome%2Frikusu%2FDocuments%2FRukky%2Fsource%2Fcore%2Futil.c;0;2
 
 [VTE]
-last_dir=/data/data/com.termux/files/home
+last_dir=/home/rikusu/Documents/Rukky
