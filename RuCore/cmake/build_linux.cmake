@@ -8,8 +8,6 @@ target_sources(
 
 target_link_libraries(
     RuCore
-    PRIVATE
-        X11
     PUBLIC
         GL
 )

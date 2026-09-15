@@ -10,7 +10,86 @@
 #include <stdlib.h>
 #include <string.h>
 
-void RukkyApplicationLoop(
+#include <wayland-client.h>
+#include <wayland-egl.h>
+#include <EGL/egl.h>
+#include <EGL/eglext.h>
+
+void RukkyApplicationLoopWayland (
+    uptr** window, // Must be the window you want to draw in
+    u32 usec_refresh_time, // Set a refresh time in micro seconds to limit resources 
+    uptr callable, // Must be a valid function
+    uptr* parameter, // Callable parameter or NULL
+    s32 sleep_frames // Run callable every X frame ammount (Set to `-1` if no callable is provided) 
+) {
+    void (*fptr)(void*, char) = NULL;
+
+    s32 countdown = -1;
+    s32 frame_amount = sleep_frames + 1;
+
+    if (callable) {
+        fptr = (void (*)(void*, char))callable;
+
+        printf("Callable: %lu\n", (uptr)fptr);
+
+        if (sleep_frames < 0) {
+            frame_amount = 1;
+        } else if (sleep_frames == 0) {
+            frame_amount = 0;
+        } else {
+            frame_amount = sleep_frames;
+            countdown = frame_amount;
+        }
+
+        fptr(parameter, 'i');
+    } else {
+        frame_amount = 0;
+        countdown = -1;
+    }
+
+    int running = 1;
+    while (running)
+    {
+        wl_display_dispatch_pending((struct wl_display*)(*window)[1]);
+
+        int ret = wl_display_dispatch((struct wl_display*)(*window)[1]);
+
+        if (fptr) {
+            if (frame_amount == 0) {
+                fptr(parameter, 'l');
+            } else {
+                if (countdown <= 0) {
+                    fptr(parameter, 'l');
+                    countdown = frame_amount;
+                } else {
+                    --countdown;
+                }
+            }
+        }
+
+            if (ret == -1) running = 0;
+
+        eglSwapBuffers((EGLDisplay)(*window)[1], (EGLSurface)(*window)[6]);
+
+	    usleep(usec_refresh_time);
+    }
+    
+    if (fptr) fptr(parameter, 'e');
+
+    eglMakeCurrent((EGLDisplay)(*window)[4], EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
+    eglDestroySurface((EGLDisplay)(*window)[4], (EGLSurface)(*window)[6] );
+    eglDestroyContext((EGLDisplay)(*window)[4], (EGLContext)(*window)[5]);
+    eglTerminate((EGLDisplay)(*window)[4]);
+
+    wl_egl_window_destroy((struct wl_egl_window*)(*window)[3]);
+    wl_surface_destroy((struct wl_surface*)(*window)[2]);
+    wl_display_disconnect((struct wl_display*)(*window)[1]);
+
+    free((void*)(*window)[12]);
+}
+
+
+void RukkyApplicationLoopX11 (
     uptr** window, // Must be the window you want to draw in
     u32 usec_refresh_time, // Set a refresh time in micro seconds to limit resources 
     uptr callable, // Must be a valid function
@@ -100,7 +179,40 @@ void RukkyApplicationLoop(
 
     free((void*)(*window)[3]);
     free((void*)(*window)[4]);
-    free((void*)(*window)[10]);
-    free((void*)(*window)[11]);
+    free((void*)(*window)[5]);
+    free((void*)(*window)[6]);
     free((void*)(*window)[12]);
+}
+
+void RukkyApplicationLoop(
+    uptr** window, // Must be the window you want to draw in
+    u32 usec_refresh_time, // Set a refresh time in micro seconds to limit resources 
+    uptr callable, // Must be a valid function
+    uptr* parameter, // Callable parameter or NULL
+    s32 sleep_frames // Run callable every X frame ammount (Set to `-1` if no callable is provided) 
+) {
+    const char* session_type = getenv("XDG_SESSION_TYPE");
+
+    if (session_type) return false;
+
+    if (strcmp(session_type, "x11") == 0) {
+        RukkyApplicationLoopX11(
+            window,
+            usec_refresh_time,
+            callable,
+            parameter,
+            sleep_frames
+        );
+    } else if (strcmp(session_type, "wayland") == 0) {
+        RukkyApplicationLoopWayland(
+            window,
+            usec_refresh_time,
+            callable,
+            parameter,
+            sleep_frames
+        );
+    } else {
+        fprintf(stderr, "Failed to start Application Loop: Session type is not X11 or Wayland.");
+        free((void*)(*window)[12]);
+    }
 }
