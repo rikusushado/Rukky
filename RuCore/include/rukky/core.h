@@ -22,7 +22,8 @@ typedef float f32;
 void fatal(const char *msg);
 
 RUKKY_PUBLIC bool RukkyNewWindow(
-    uptr** window, 
+    uptr** window,
+    int* framebuffer_attributes, 
     s32 x, s32 y,
     u32 width, u32 height,
     u32 border_width,

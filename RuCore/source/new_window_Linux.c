@@ -9,7 +9,8 @@
 #include <string.h>
 
 bool RukkyNewWindow(
-    uptr** window, 
+    uptr** window,
+    int* framebuffer_attributes,
     s32 x, s32 y,
     u32 width, u32 height,
     u32 border_width,
@@ -23,57 +24,44 @@ bool RukkyNewWindow(
 
     (*window)[2] = (uptr)DefaultScreen((Display*)(*window)[1]);
 
-    int fbAttribs[] = {
-        GLX_X_RENDERABLE, True,
-        GLX_DRAWABLE_TYPE, GLX_WINDOW_BIT,
-        GLX_RENDER_TYPE,   GLX_RGBA_BIT,
-        GLX_X_VISUAL_TYPE, GLX_TRUE_COLOR,
-        GLX_RED_SIZE,      8,
-        GLX_GREEN_SIZE,    8,
-        GLX_BLUE_SIZE,     8,
-        GLX_ALPHA_SIZE,    8,
-        GLX_DEPTH_SIZE,    24,
-        GLX_DOUBLEBUFFER,  True,
-        None
-    };
+    int framebuffer_count;
+    GLXFBConfig *framebuffer_config_array = glXChooseFBConfig((Display*)(*window)[1], (int)(*window)[2], framebuffer_attributes, &framebuffer_count);
+    if (!framebuffer_config_array || framebuffer_count == 0) fatal("no FBConfig");
 
-    int fbcount;
-    GLXFBConfig *fbconfigs = glXChooseFBConfig((Display*)(*window)[1], (int)(*window)[2], fbAttribs, &fbcount);
-    if (!fbconfigs || fbcount == 0) fatal("no FBConfig");
+    GLXFBConfig framebuffer_config = framebuffer_config_array[0];
 
-    GLXFBConfig fbconfig = fbconfigs[0];
-
-    XVisualInfo *vi = glXGetVisualFromFBConfig((Display*)(*window)[1], fbconfig);
-    if (!vi) fatal("no visual");
+    XVisualInfo *visual_info = glXGetVisualFromFBConfig((Display*)(*window)[1], framebuffer_config);
+    if (!visual_info) fatal("no visual");
 
     (*window)[3] = (uptr)malloc(sizeof(XWindowAttributes));
    
-    XSetWindowAttributes* swa = (XSetWindowAttributes*)(*window)[3]; 
-    swa->colormap = XCreateColormap((Display*)(*window)[1], RootWindow((Display*)(*window)[1], vi->screen), vi->visual, AllocNone);
-    swa->event_mask = ExposureMask | KeyPressMask | StructureNotifyMask;
+    XSetWindowAttributes* set_window_attributes = (XSetWindowAttributes*)(*window)[3]; 
+    set_window_attributes->colormap = 
+        XCreateColormap((Display*)(*window)[1], RootWindow((Display*)(*window)[1], visual_info->screen), visual_info->visual, AllocNone);
+    set_window_attributes->event_mask = ExposureMask | KeyPressMask | StructureNotifyMask;
 
     (*window)[4] = (uptr)malloc(sizeof(Window));
 
-    Window* windowX11 = (Window*)(*window)[4]; 
+    Window* window_x11 = (Window*)(*window)[4]; 
 
-    *windowX11 = XCreateWindow(
+    *window_x11 = XCreateWindow(
         (Display*)(*window)[1],
-        RootWindow((Display*)(*window)[1], vi->screen),
+        RootWindow((Display*)(*window)[1], visual_info->screen),
         (*window)[5] = x, (*window)[6] = y, 
         (*window)[7] = width, (*window)[8] = height, 
         (*window)[9] = border_width,
-        vi->depth,
+        visual_info->depth,
         InputOutput,
-        vi->visual,
+        visual_info->visual,
         CWColormap | CWEventMask,
-        swa
+        set_window_attributes
     );
 
     (*window)[10] = (uptr)malloc(sizeof(title));
     strncpy((char*)(*window)[10], (char*)title, sizeof(title) - 1);
 
-    XStoreName((Display*)(*window)[1], *windowX11, (char*)(*window)[10]);
-    XMapWindow((Display*)(*window)[1], *windowX11);
+    XStoreName((Display*)(*window)[1], *window_x11, (char*)(*window)[10]);
+    XMapWindow((Display*)(*window)[1], *window_x11);
 
     typedef GLXContext (*glXCreateContextAttribsARBProc)(
         Display*, GLXFBConfig, GLXContext, Bool, const int*
@@ -82,7 +70,7 @@ bool RukkyNewWindow(
         (glXCreateContextAttribsARBProc)
         glXGetProcAddress((const GLubyte*)"glXCreateContextAttribsARB");
 
-    int contextAttribs[] = {
+    int context_attributes[] = {
         GLX_CONTEXT_MAJOR_VERSION_ARB, 3,
         GLX_CONTEXT_MINOR_VERSION_ARB, 3,
         GLX_CONTEXT_PROFILE_MASK_ARB,  GLX_CONTEXT_CORE_PROFILE_BIT_ARB,
@@ -90,20 +78,20 @@ bool RukkyNewWindow(
     };
 
     (*window)[11] = (uptr)malloc(sizeof(GLXContext));
-    GLXContext* contextGL = (GLXContext*)(*window)[11];
+    GLXContext* context_opengl = (GLXContext*)(*window)[11];
     if (glXCreateContextAttribsARB) {
-        *contextGL = glXCreateContextAttribsARB((Display*)(*window)[1], fbconfig, 0, True, contextAttribs);
+        *context_opengl = glXCreateContextAttribsARB((Display*)(*window)[1], framebuffer_config, 0, True, context_attributes);
     } else {
-        *contextGL = glXCreateNewContext((Display*)(*window)[1], fbconfig, GLX_RGBA_TYPE, 0, True);
+        *context_opengl = glXCreateNewContext((Display*)(*window)[1], framebuffer_config, GLX_RGBA_TYPE, 0, True);
     }
 
-    if (!*contextGL) fatal("failed to create GL context");
+    if (!*context_opengl) fatal("failed to create OpenGL context");
 
     (*window)[12] = (uptr)malloc(sizeof(GLXWindow));
 
-    GLXWindow* windowGLX = (GLXWindow*)(*window)[12]; 
-    *windowGLX = glXCreateWindow((Display*)(*window)[1], fbconfig, *windowX11, NULL);
-    glXMakeContextCurrent((Display*)(*window)[1], *windowGLX, *windowGLX, *contextGL);
+    GLXWindow* window_opengl = (GLXWindow*)(*window)[12]; 
+    *window_opengl = glXCreateWindow((Display*)(*window)[1], framebuffer_config, *window_x11, NULL);
+    glXMakeContextCurrent((Display*)(*window)[1], *window_opengl, *window_opengl, *context_opengl);
     
     glViewport((s32)(*window)[5], (s32)(*window)[6], (u32)(*window)[7], (u32)(*window)[8]);
 
