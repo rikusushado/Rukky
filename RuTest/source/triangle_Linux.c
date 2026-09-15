@@ -1,4 +1,4 @@
-#include <rukky/rukky.h>
+#include <rukky/core.h>
 
 #include <stdio.h>
 
