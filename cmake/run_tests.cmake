@@ -1,0 +1,1 @@
+exec_program(rukky_triangle_test "build")
